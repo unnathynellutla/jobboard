@@ -10,7 +10,7 @@ import json
 
 @login_required
 def index(request):
-    if request.method == "POST" and request.is_ajax():
+    if request.method == "POST":
         try:
             # Parse the JSON payload
           data = json.loads(request.body)[0]
