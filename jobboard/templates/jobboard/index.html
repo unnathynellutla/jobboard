@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+{% if user.is_authenticated %}
+Hi {{ user.username }}!
+        <head>
+            <meta charset="utf-8">
+            <title>My Job Applications</title>
+            {% load static %}
+            <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+            <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+            <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+            <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+
+            {% block extrajavascript %}
+
+            <!-- required for CSRF cookie parsing //-->
+            <script src="{% static 'js/jquery-sortable.js' %}"></script>
+            <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+            <script>
+            // get the Django CSRF Cookie
+            $(function() {
+            
+            // Make our ordered list with a class of example sortable.
+            // onDrop (reorder item) make a JSON representation of the list and POST the JSON to the current page
+            var group = $( '.connectedSortable' ).sortable({
+                    connectWith: '.connectedSortable',
+                    delay: 500,
+                    onDrop: function ($item, container, _super) {
+                        var data = group.sortable("serialize").get();
+                        var jsonString = JSON.stringify(data, null, ' ');
+                        _super($item, container);
+                        $.ajax({
+                                      type: "POST",
+                                      data: jsonString,
+                                      url: "http://localhost:8000/jobboard/"
+                                });
+                     },
+              });
+            });
+            </script>
+            
+            {% endblock %}          
+        </head>
+        <body>
+              <ul>
+                {% for stage in latest_stage_list %}
+                    <li><a>{{ stage.stage_title }}</a>
+                        <div class="list">
+                        </div>
+                        <ul  class="connectedSortable">
+                        {% for posting in stage.ordered_posting_set %}
+                            <li  id = "{{ posting.job_title}}" class="ui-state-default"><a href="{% url 'jobboard:edit_post' posting.id %}">{{ posting.job_title}}</a></li>
+                        {% endfor %}
+                        </ul>  
+                    </li>
+                {% endfor %}
+                <script  src="{% static 'function.js' %}"></script>
+                </ul>
+              
+        <p><a href="{% url 'logout' %}">Log Out</a></p>
+     </body>
+{% else %}
+<p>You are not logged in</p>
+<a href="/accounts/login/">Log In</a>
+{% endif %}
+</html>

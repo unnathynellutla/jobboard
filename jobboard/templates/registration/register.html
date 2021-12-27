@@ -1,0 +1,15 @@
+{% load crispy_forms_tags %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+<h1>Register Form</h1>
+<form method="POST">
+  {% csrf_token %} 
+  <fieldset class="form-group">
+    {{ form|crispy }}
+  </fieldset>
+  <div class="form-group">
+    <button class="btn btn-outline-info" type="submit">Register</button>
+  </div>
+</form>
