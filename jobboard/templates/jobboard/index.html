@@ -12,19 +12,6 @@ Hi {{ user.username }}!
             <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script> 
         </head>
         <body>
-            <ul id="sortable1" class="connectedSortable"><b>Left side</b>
-                <!--<?php echo $column1; ?>-->
-              <li id="entry_1" class="ui-state-default">Entry #1</li>
-              <li id="entry_2" class="ui-state-default">Entry #2</li>
-              <li id="entry_3" class="ui-state-default">Entry #3</li>
-            </ul>
-            
-            <ul id="sortable2" class="connectedSortable"><b>Right side</b>
-              <!--<?php echo $column2; ?>-->
-              <li id="entry_4" class="ui-state-default">Entry #4</li>
-              <li id="entry_5" class="ui-state-default">Entry #5</li>
-              <li id="entry_6" class="ui-state-default">Entry #6</li>
-            </ul> 
             <ul>
                 {% for stage in latest_stage_list %}
                     <li><a>{{ stage.stage_title }}</a>
