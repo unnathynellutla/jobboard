@@ -17,11 +17,8 @@ Hi {{ user.username }}!
                     <li><a>{{ stage.stage_title }}</a>
                         <ul id = "{{ stage.stage_title }}" class="connectedSortable">
                             {% for posting in stage.ordered_posting_set %}
-                                <li  id = "{{ posting.job_title }}" class="ui-state-default">{{ posting.job_title}}</a></li>
+                                <li  id="entry_{{posting.id}}" class="ui-state-default"><a href="{% url 'jobboard:edit_post' posting.id %}">{{posting.id}}</a></li>
                              {% endfor %}
-                            <li id="entry_4" class="ui-state-default">{{ stage.stage_title }}</li>
-                            <li id="entry_5" class="ui-state-default">Entry #5</li>
-                            <li id="entry_6" class="ui-state-default">Entry #6</li>
                         </ul>  
                     </li>
                 {% endfor %}
@@ -36,32 +33,51 @@ Hi {{ user.username }}!
 {% endif %}
 </html>
 
-{% block extrajavascript %}
-
 <!-- required for CSRF cookie parsing //-->
 <script src="{% static 'js/jquery-sortable.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script>
 // get the Django CSRF Cookie
 $(function() {
+    var csrftoken = Cookies.get('csrftoken');
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
 
+    $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+    });
 // Make our ordered list with a class of example sortable.
 // onDrop (reorder item) make a JSON representation of the list and POST the JSON to the current page
-var group = $("#Applied, #Assessment, #Interview" ).sortable({
+var group = $(".connectedSortable" ).sortable({
         connectWith: '.connectedSortable',
         delay: 500,
         update: function () {
-            var data = $("#Applied" ).sortable("serialize");
-            var jsonString = JSON.stringify(data);
-            document.write(jsonString);
+            const arr = [];
+            {% for stage in latest_stage_list %}
+                var data = $("#{{ stage.stage_title }}").sortable("serialize");
+                var jsonString = JSON.stringify(data, null, 2);
+                arr.push(jsonString)
+            {% endfor %}
+            document.write(arr)
+            var data1 = $("#Applied").sortable("serialize", {key:'id'});
+            var jsonString1 = JSON.stringify(data1, null, 2);
+            var data2 = $("#Assessment").sortable("serialize", {key:'id'});
+            var jsonString2 = JSON.stringify(data2, null, ' ');
+            var data3 = $("#Interview").sortable("serialize", {key:'id'});
+            var jsonString3 = JSON.stringify(data3, null, ' ');
             $.ajax({
                         type: "POST",
-                        data: jsonString,
-                        url: "index.html"
+                        data: {jsonString1, jsonString2, jsonString3},
+                        url: ""
                     });
         },
 });
 }).disableSelection();
 </script>
-
-{% endblock %}     
+  
