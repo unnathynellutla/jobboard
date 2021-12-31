@@ -1,12 +1,9 @@
-from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseServerError, JsonResponse, QueryDict
+from django.shortcuts import get_object_or_404, render, HttpResponseRedirect
+from django.http import HttpResponseServerError, JsonResponse
 from django.template import loader
 from .models import Stage, Posting
 from django.contrib.auth.decorators import login_required
-from jobboard.forms import UserRegisterForm
-from django.views.decorators.csrf import ensure_csrf_cookie
-from django.utils.decorators import method_decorator
-import json
+from .forms import EditPostForm, UserRegisterForm, EditStageForm
 import logging
 
 
@@ -14,56 +11,25 @@ import logging
 def index(request):
     if request.method == "POST":
         try:
-          
           logger = logging.getLogger("mylogger")
-          # Parse the JSON payload
           body_unicode = request.body.decode('utf-8')
-          q = QueryDict(body_unicode)
-
-          stage1 = Stage.objects.get(stage_title = 'Applied')
-          q1 = q.__getitem__('jsonString1')
-          str_q1 = q1.replace('id=', '')
-          str_q1 = str_q1.replace('"', '')
-          arr1 = str_q1.split('&')
-          for curr in arr1:
-            posting = Posting.objects.get(id=curr)
-            if posting not in Posting.objects.filter(stage = stage1):
-              posting.stage = stage1
-              posting.save()
-              logger.info(posting.stage)
-
-          stage2 = Stage.objects.get(stage_title = 'Assessment')
-          q2 = q.__getitem__('jsonString2')
-          str_q2 = q2.replace('id=', '')
-          str_q2 = str_q2.replace('"', '')
-          arr2 = str_q2.split('&')
-          for curr in arr2:
-            posting = Posting.objects.get(id=curr)
-            if posting not in Posting.objects.filter(stage = stage2):
-              posting.stage = stage2
-              posting.save()
-              logger.info(posting.stage)
-
-          stage3 = Stage.objects.get(stage_title = 'Interview')
-          q3 = q.__getitem__('jsonString3')
-          str_q3 = q3.replace('id=', '')
-          str_q3 = str_q3.replace('"', '')
-          arr3 = str_q3.split('&')
-          for curr in arr3:
-            posting = Posting.objects.get(id=curr)
-            if posting not in Posting.objects.filter(stage = stage3):
-              posting.stage = stage3
-              posting.save()
-              logger.info(posting.stage)
-
-          
-  
-            # Loop over our list order. The id equals the question id. Update the order and save'
-         # for posting in enumerate(data1):
-         #   pq = Stage.objects.get(posting=posting['string'])
-         #   pq.stage_title = "Hi"
-
-
+          body_unicode = body_unicode.replace('id=', '')
+          body_unicode = body_unicode.replace('"', '')
+          body_unicode = body_unicode.replace('[', '')
+          body_unicode = body_unicode.replace(']', '')
+          arr = body_unicode.split(',')
+          idx = 0
+          for curr_stage in Stage.objects.all():
+            q1 = arr[idx]
+            arr1 = q1.split('&')
+            idx += 1
+            if len(arr1) == 1 and arr1[0] == '':
+               continue
+            for curr in arr1:
+              posting = Posting.objects.get(id=curr)
+              if posting not in Posting.objects.filter(stage = curr_stage):
+                posting.stage = curr_stage
+                posting.save()
 
         except KeyError:
             HttpResponseServerError("Malformed data!")
@@ -77,9 +43,76 @@ def index(request):
       return render(request, 'jobboard/index.html', context)
 
 @login_required
+def detail_view(request, posting_id):
+    posting = get_object_or_404(Posting, pk=posting_id)
+    return render(request, 'jobboard/detail_view.html', {'posting': posting})
+
+@login_required
 def edit_post(request, posting_id):
-        posting = get_object_or_404(Posting, pk=posting_id)
-        return render(request, 'jobboard/edit_post.html', {'posting': posting})
+  context = {}
+  posting = get_object_or_404(Posting, pk=posting_id)
+  form = EditPostForm(request.POST or None, instance = posting)
+  if form.is_valid():
+    form.save()
+    return HttpResponseRedirect("detail_view")
+  context["form"] = form
+  return render(request, 'jobboard/edit_post.html', context)
+
+@login_required
+def create_post(request):
+  context = {}
+  form = EditPostForm(request.POST or None)
+  if form.is_valid():
+    form.save()
+  context["form"] = form
+  return render(request, 'jobboard/create_post.html', context)
+
+@login_required
+def create_stage(request):
+  context = {}
+  form = EditStageForm(request.POST or None)
+  if form.is_valid():
+    form.save()
+  context["form"] = form
+  return render(request, 'jobboard/create_stage.html', context)
+
+@login_required
+def edit_stage(request, stage_id):
+  context = {}
+  stage = get_object_or_404(Stage, pk=stage_id)
+  form = EditStageForm(request.POST or None, instance = stage)
+  if form.is_valid():
+    form.save()
+  context["form"] = form
+  return render(request, 'jobboard/edit_stage.html', context)
+
+@login_required
+def delete_post(request, posting_id):
+    context ={}
+    posting = get_object_or_404(Posting, pk=posting_id)
+ 
+    if request.method =="POST":
+        posting.delete()
+        latest_stage_list = Stage.objects.all()
+        context = {
+            'latest_stage_list': latest_stage_list,
+        }
+        return render(request, 'jobboard/index.html', context)
+    return render(request, "jobboard/delete_post.html", context)
+
+@login_required
+def delete_stage(request, stage_id):
+    context ={}
+    stage = get_object_or_404(Stage, pk=stage_id)
+ 
+    if request.method =="POST":
+        stage.delete()
+        latest_stage_list = Stage.objects.all()
+        context = {
+            'latest_stage_list': latest_stage_list,
+        }
+        return render(request, 'jobboard/index.html', context)
+    return render(request, "jobboard/delete_stage.html", context)
 
 def register(request):
     if request.method == 'POST':
