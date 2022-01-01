@@ -1,13 +1,10 @@
 from django.shortcuts import get_object_or_404, render, HttpResponseRedirect
 from django.http import HttpResponseServerError, JsonResponse
-from django.template import loader
 from .models import Stage, Posting
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .forms import EditPostForm, UserRegisterForm, EditStageForm
 import logging
-from django.conf import settings
-from django.core.mail import send_mail
 
 
 @login_required
@@ -123,7 +120,7 @@ def register(request):
       form = UserRegisterForm(request.POST)
       if form.is_valid(): 
         form.save()
-        return index(request)
+        return HttpResponseRedirect(request.POST.get('next','/jobboard/'))
     else:
       form = UserRegisterForm()
     return render(request, 'registration/register.html', {'form': form})

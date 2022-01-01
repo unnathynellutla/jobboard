@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Posting, Stage
+from django import forms
 
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField()
@@ -44,3 +45,4 @@ class EditPostForm(forms.ModelForm):
                 'Required Field'])
  
         return self.cleaned_data
+

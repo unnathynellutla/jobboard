@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'jobboard',
 ]
 
 MIDDLEWARE = [
@@ -181,8 +182,13 @@ EMAIL_HOST_USER = 'unnathy5109@gmail.com'
 EMAIL_HOST_PASSWORD = 'Lucky5109'
 
 BROKER_URL = 'redis://localhost:6379'
+
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
 CELERY_ACCEPT_CONTENT = ['application/json']
+
 CELERY_TASK_SERIALIZER = 'json'
+
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Africa/Nairobi'
+
+CELERY_TIMEZONE = 'America/New_York'
