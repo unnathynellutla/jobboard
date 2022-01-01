@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .forms import EditPostForm, UserRegisterForm, EditStageForm
 import logging
+from django.conf import settings
+from django.core.mail import send_mail
 
 
 @login_required
@@ -52,19 +54,10 @@ def detail_view(request, posting_id):
 def edit_post(request, posting_id):
   context = {}
   posting = get_object_or_404(Posting, pk=posting_id)
-  form = EditPostForm(request.POST or None, request = request)
+  form = EditPostForm(request.POST or None, request = request, instance = posting)
   form.fields["job_title"].text = posting.job_title
   if form.is_valid():
-    cd = form.cleaned_data
-    pc = Posting(
-        stage = cd['stage'].first(),
-        job_title = cd['job_title'],
-        deadline = cd['deadline'],
-        job_description = cd['job_description'],
-        job_url = cd['job_url'],
-        job_email = cd['job_email']
-    ) 
-    pc.save()
+    form.save()
     return HttpResponseRedirect("detail_view")
   context["form"] = form
   return render(request, 'jobboard/edit_post.html', context)
@@ -74,23 +67,14 @@ def create_post(request):
   context = {}
   form = EditPostForm(request.POST or None, request = request)
   if form.is_valid():
-    cd = form.cleaned_data
-    pc = Posting(
-        stage = cd['stage'].first(),
-        job_title = cd['job_title'],
-        deadline = cd['deadline'],
-        job_description = cd['job_description'],
-        job_url = cd['job_url'],
-        job_email = cd['job_email']
-    ) 
-    pc.save()
+    form.save()
   context["form"] = form
   return render(request, 'jobboard/create_post.html', context)
 
 @login_required
 def create_stage(request):
   context = {}
-  form = EditStageForm(request.POST or None)
+  form = EditStageForm(request.POST or None, request = request)
   if form.is_valid():
     form.save()
   context["form"] = form
@@ -100,7 +84,7 @@ def create_stage(request):
 def edit_stage(request, stage_id):
   context = {}
   stage = get_object_or_404(Stage, pk=stage_id)
-  form = EditStageForm(request.POST or None, instance = stage)
+  form = EditStageForm(request.POST or None, request = request, instance = stage)
   if form.is_valid():
     form.save()
   context["form"] = form
@@ -139,7 +123,6 @@ def register(request):
       form = UserRegisterForm(request.POST)
       if form.is_valid(): 
         form.save()
-        username = form.cleaned_data.get('username')
         return index(request)
     else:
       form = UserRegisterForm()

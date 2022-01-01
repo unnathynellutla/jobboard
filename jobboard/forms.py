@@ -8,20 +8,22 @@ class UserRegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
-
+        
 class EditStageForm(forms.ModelForm):
     class Meta:
         model = Stage
-        fields = ['stage_title']
+        fields = ['author', 'stage_title']
+
+    def __init__(self, * args, ** kwargs):
+        self.request = kwargs.pop("request")
+        super(EditStageForm, self).__init__( * args, ** kwargs)
+        self.fields["author"].initial = self.request.user
+        self.fields["author"].widget = forms.HiddenInput()
     
 class EditPostForm(forms.ModelForm):
-
-    stage = forms.ModelMultipleChoiceField(queryset = None)
-    job_title = forms.CharField(max_length=200)
-    deadline = forms.DateTimeField(required=False)
-    job_description = forms.CharField(widget=forms.Textarea, required=False)
-    job_url = forms.URLField(initial='http://', required=False)
-    job_email = forms.EmailField(required=False)
+    class Meta:
+        model = Posting
+        fields = ['stage', 'job_title', 'deadline', 'job_description', 'job_url', 'job_email']
 
     def __init__(self, * args, ** kwargs):
         self.request = kwargs.pop("request")
@@ -29,15 +31,11 @@ class EditPostForm(forms.ModelForm):
         self.fields["stage"].queryset = Stage.objects.filter(author = self.request.user)
     
     def clean(self):
- 
-        # data from the form is fetched using super function
         super(EditPostForm, self).clean()
          
-        # extract the username and text field from the data
         stage = self.cleaned_data.get('stage')
         job_title = self.cleaned_data.get('job_title')
  
-        # conditions to be met for the username length
         if stage is None:
             self._errors['stage'] = self.error_class([
                 'Required Field'])
@@ -45,5 +43,4 @@ class EditPostForm(forms.ModelForm):
             self._errors['stage'] = self.error_class([
                 'Required Field'])
  
-        # return any errors if found
         return self.cleaned_data

@@ -13,9 +13,9 @@ Hi {{ user.username }}!
         </head>
         <body>
             <div class="row">
-                <ul class="list-group list-group-horizontal">
+                <ul style = "min-width: 100px;" class="list-group list-group-horizontal connectedStage">
                     {% for stage in latest_stage_list %}
-                        <li class="list-group-item"><a href="{% url 'jobboard:edit_stage' stage.id %}">{{ stage.stage_title }}</a>
+                        <li class="list-group-item ui-state-default"><a href="{% url 'jobboard:edit_stage' stage.id %}">{{ stage.stage_title }}</a>
                             <p><a href="{% url 'jobboard:delete_stage' stage.id %}" class="button">Delete Stage</a> </p>   
                             <ul style = "min-height: 100px;" id = "{{ stage.stage_title }}" class="connectedSortable">
                                 {% for posting in stage.ordered_posting_set %}
@@ -63,6 +63,7 @@ $(function() {
     });
 // Make our ordered list with a class of example sortable.
 // onDrop (reorder item) make a JSON representation of the list and POST the JSON to the current page
+
 var group = $(".connectedSortable" ).sortable({
         connectWith: '.connectedSortable',
         delay: 500,
