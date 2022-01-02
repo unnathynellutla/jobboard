@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 import os
 from celery import Celery
-from django.contrib.auth.models import User
 from django.conf import settings
 from .settings import EMAIL_HOST_USER
 from django.core.mail import send_mail
@@ -28,7 +27,7 @@ def add(x, y):
 @app.task
 def daily_emails():
     send = False
-    receivers = User.objects.all()
+    receivers = "unnathy.nellutla@tufts.edu"
     current_day = date.today()
     for receiver in receivers:
         subject= "Today's Job Alerts for " + receiver.username
