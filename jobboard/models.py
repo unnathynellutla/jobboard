@@ -23,7 +23,7 @@ class Posting(models.Model):
     def __str__(self):
         return self.job_title
     def date_passed(self):
-        return self.deadline <= timezone.now()
+        return self.deadline >= timezone.now()
 
 class UpdateTime(models.Model):
     CHOICES = (

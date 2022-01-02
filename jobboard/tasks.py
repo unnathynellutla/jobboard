@@ -9,7 +9,7 @@ from datetime import date, timedelta
 
 
 @periodic_task(
-    run_every=timedelta(days=7),
+    run_every=timedelta(minutes=1),
     name="send_email_weekly",
     ignore_result=True
 )
@@ -37,7 +37,7 @@ def weekly_emails():
 
 
 @periodic_task(
-    run_every=timedelta(days=1),
+    run_every=timedelta(minutes=1),
     name="send_email_daily",
     ignore_result=True
 )
