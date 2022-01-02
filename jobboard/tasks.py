@@ -1,5 +1,5 @@
 from celery import shared_task 
-from celery.decorators import periodic_task
+from celery import periodic_task
 from mysite.settings import EMAIL_HOST_USER
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
