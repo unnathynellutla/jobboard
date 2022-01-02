@@ -1,20 +1,33 @@
 {% load static %}
+{% load crispy_forms_tags %}
+<title>Detail view</title>
 <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href='{% static "styles.css" %}'>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 div {
     white-space: pre-wrap;
 }
+body{
+margin-left:15%;
+}
 </style>
+<div class="sidenav">
+    {% if user.is_authenticated %}
+    <div> <h2> Hi {{ user.username }}! </h2> </div>
+    <a href="{% url 'jobboard:edit_post' posting.id %}" class="button">Edit</a>
+    <a href="{% url 'jobboard:index' %}" class="button">Back</a>
+    <a href="{% url 'jobboard:delete_post' posting.id %}" class="button">Delete</a> 
+<a href="{% url 'logout' %}"> Log Out <span class = "glyphicon glyphicon-log-out"></span></a>
+</div>
+{% endif %}
 
+<body>
     <h1>{{ posting.job_title }}</h1>
     <div>{{ posting.company }}</div>
     <div>{{ posting.deadline|date:"Y-m-d"}}</div>
     <div>{{ posting.job_description}}</div>
     <a href = '{{posting.job_url}}' class = "widget-49-meeting-points">{{posting.job_url}}</a>
-    <div>
-    <a href="{% url 'jobboard:edit_post' posting.id %}" class="button">Edit</a>
-    <a href="{% url 'jobboard:index' %}" class="button">Back</a>
-    <a href="{% url 'jobboard:delete_post' posting.id %}" class="button">Delete</a>
-    </div>
+</body>

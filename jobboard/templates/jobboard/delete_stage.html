@@ -1,12 +1,15 @@
+{% load crispy_forms_tags %}
+{% load static %}
+<title>Delete Stage</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <div class="main">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href='{% static "styles.css" %}'>
-    <!-- Create a Form -->
     <form method="POST">
-        <!-- Security token by Django -->
         {% csrf_token %}
-        Are you want to delete this item ?
+        Are you want to delete this item ? This action will delete all associated posts.
+        <input type="hidden" name="next" value="{% url 'jobboard:index' %}">
         <input type="submit" value="Yes" />
-        <a href="/jobboard">Back </a>
+        <a href="/jobboard">Cancel </a>
     </form>
 </div>

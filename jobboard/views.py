@@ -65,6 +65,8 @@ def create_post(request):
   form = EditPostForm(request.POST or None, request = request)
   if form.is_valid():
     form.save()
+    next = request.POST.get('next', '/')
+    return HttpResponseRedirect(next)
   context["form"] = form
   return render(request, 'jobboard/create_post.html', context)
 
@@ -74,6 +76,8 @@ def get_updates(request):
   form = UpdateTimeForm(request.POST or None, request = request)
   if form.is_valid():
     form.save()
+    next = request.POST.get('next', '/')
+    return HttpResponseRedirect(next)
   context["form"] = form
   return render(request, 'jobboard/get_updates.html', context)
 
@@ -83,6 +87,8 @@ def create_stage(request):
   form = EditStageForm(request.POST or None, request = request)
   if form.is_valid():
     form.save()
+    next = request.POST.get('next', '/')
+    return HttpResponseRedirect(next)
   context["form"] = form
   return render(request, 'jobboard/create_stage.html', context)
 
@@ -93,6 +99,8 @@ def edit_stage(request, stage_id):
   form = EditStageForm(request.POST or None, request = request, instance = stage)
   if form.is_valid():
     form.save()
+    next = request.POST.get('next', '/')
+    return HttpResponseRedirect(next)
   context["form"] = form
   return render(request, 'jobboard/edit_stage.html', context)
 
@@ -103,6 +111,8 @@ def delete_post(request, posting_id):
  
     if request.method =="POST":
         posting.delete()
+        next = request.POST.get('next', '/')
+        return HttpResponseRedirect(next)
     return render(request, "jobboard/delete_post.html", context)
 
 @login_required
@@ -112,6 +122,8 @@ def delete_stage(request, stage_id):
  
     if request.method =="POST":
         stage.delete()
+        next = request.POST.get('next', '/')
+        return HttpResponseRedirect(next)
     return render(request, "jobboard/delete_stage.html", context)
 
 def register(request):
