@@ -16,23 +16,23 @@ from datetime import date, timedelta
 def weekly_emails():
     send = False
     receivers = User.objects.all()
-    current_week = date.today().isocalendar()[1]
+    #current_week = date.today().isocalendar()[1]
     for receiver in receivers:
         subject= "Today's Job Alerts for " + receiver.username
         message = 'Your deadlines in the next week: '
-        for stage in Stage.objects.filter(author=receiver): 
-            for posting in stage.ordered_posting_set().filter(deadline__week=current_week):
-                send = True
-                message += posting.job_title 
-                message += ' '
-                message += stage.stage_title
-                message += ' due on: '
-                message += posting.deadline.strftime("%m/%d/%Y, %H:%M:%S")
-                message += ' '
-            message += '.'
-        if send == True:
-            send_mail(subject,message,EMAIL_HOST_USER,[receiver.email], fail_silently= False)
-            send = False
+       # for stage in Stage.objects.filter(author=receiver): 
+       #     for posting in stage.ordered_posting_set().filter(deadline__week=current_week):
+       #         send = True
+       #         message += posting.job_title 
+       #         message += ' '
+       #         message += stage.stage_title
+       #         message += ' due on: '
+       #         message += posting.deadline.strftime("%m/%d/%Y, %H:%M:%S")
+       #         message += ' '
+       #     message += '.'
+       # if send == True:
+        send_mail(subject,message,EMAIL_HOST_USER,[receiver.email], fail_silently= False)
+        send = False
     return('first_task_done')
 
 
