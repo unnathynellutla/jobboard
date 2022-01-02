@@ -20,3 +20,27 @@ def debug_task(self):
 @app.task
 def add(x, y):
     return x + y
+
+
+@app.task
+def daily_emails():
+    send = False
+    receivers = User.objects.all()
+    current_day = date.today()
+    for receiver in receivers:
+        subject= "Today's Job Alerts for " + receiver.username
+        message = 'Your deadlines in the next 24 hours: '
+        for stage in Stage.objects.filter(author=receiver): 
+            for posting in stage.ordered_posting_set().filter(deadline__day=current_day):
+                send = True
+                message += posting.job_title 
+                message += ' '
+                message += stage.stage_title
+                message += ' due on: '
+                message += posting.deadline.strftime("%m/%d/%Y, %H:%M:%S")
+                message += ' '
+            message += '.'
+        if send == True:
+            send_mail(subject,message,EMAIL_HOST_USER,[receiver.email], fail_silently= False)
+            send = False
+    return('first_task_done')
