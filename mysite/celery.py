@@ -4,7 +4,6 @@ from celery import Celery
 from django.conf import settings
 from .settings import EMAIL_HOST_USER
 from django.core.mail import send_mail
-from jobboard.models import Stage
 from datetime import date, timedelta
 
 # set the default Django settings module for the 'celery' program.
