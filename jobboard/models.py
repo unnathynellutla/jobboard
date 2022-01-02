@@ -14,6 +14,7 @@ class Stage(models.Model):
         
 class Posting(models.Model):
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE, blank=True, null=True)
+    company =  models.CharField(max_length=200, blank=True, null=True)
     job_title = models.CharField(max_length=200, blank=True, null=True)
     deadline = models.DateTimeField('Next Deadline', blank=True, null=True)
     job_description = models.TextField('Descripton', blank=True, null=True)
@@ -23,4 +24,15 @@ class Posting(models.Model):
         return self.job_title
     def date_passed(self):
         return self.deadline <= timezone.now()
+
+class UpdateTime(models.Model):
+    CHOICES = (
+        ('week','Weekly'),
+        ('day', 'Daily'),
+        ('none', 'Never')
+    )
+    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    update_time = models.CharField('Recieve Updates on ', max_length=200, choices = CHOICES)
+    def __str__(self):
+        return self.update_time
 

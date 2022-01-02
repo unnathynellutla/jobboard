@@ -1,44 +1,66 @@
 <!DOCTYPE html>
 <html>
 {% if user.is_authenticated %}
-Hi {{ user.username }}!
+<div> <h2> Hi {{ user.username }}! </h2> </div>
         <head>
             <meta charset="utf-8">
             <title>My Job Applications</title>
             {% load static %}
             <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
             <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+            <link rel="stylesheet" type="text/css" href='{% static "styles.css" %}'>
             <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
             <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script> 
         </head>
         <body>
+            <div class="container">
             <div class="row">
-                <ul style = "min-width: 100px;" class="list-group list-group-horizontal connectedStage">
-                    {% for stage in latest_stage_list %}
-                        <li class="list-group-item ui-state-default"><a href="{% url 'jobboard:edit_stage' stage.id %}">{{ stage.stage_title }}</a>
-                            <p><a href="{% url 'jobboard:delete_stage' stage.id %}" class="button">Delete Stage</a> </p>   
-                            <ul style = "min-height: 100px;" id = "{{ stage.stage_title }}" class="connectedSortable">
-                                {% for posting in stage.ordered_posting_set %}
-                                    <li  id="entry_{{posting.id}}" class="ui-state-default card"><a href="{% url 'jobboard:detail_view' posting.id %}">{{posting.job_title}}</a>
-                                    <p>{{posting.deadline}}</p>
-                                    <p>{{posting.job_description}}</p>
-                                    <p>{{posting.job_url}}</p>
-                                    <p>{{posting.job_email}}</p>
-                                    </li>
-                                {% endfor %}
-                            </ul>  
-                        </li>
-                    {% endfor %}
-                </ul>
+                    <ul class="list-group list-group-horizontal col-lg">
+                        {% for stage in latest_stage_list %}
+                            <li style="min-width:20%;" class="list-group-item ui-state-default">
+                            <p> {{ stage.stage_title }} <a href="{% url 'jobboard:edit_stage' stage.id %}"><span class = "glyphicon glyphicon-edit"></span></a><a href="{% url 'jobboard:delete_stage' stage.id %}"><span class = "glyphicon glyphicon-remove"></span></a></p>     
+                                <ul style = "min-height: 100px;" id = "{{ stage.stage_title }}" class="connectedSortable">
+                                    {% for posting in stage.ordered_posting_set %}
+                                        <li  id="entry_{{posting.id}}" class="ui-state-default card card-margin">
+                                        <div class="card-body pt-0">
+                                        <div class="widget-49">
+                                        <div class="widget-49-title-wrapper">
+                                            <div class = "widget-49-date-primary"><span class="widget-49-date-month">{{posting.deadline}}</span></div>    
+                                        </div>
+                                        <div class="widget-49-meeting-info">
+                                            <span class="widget-49-pro-title"> {{posting.job_title}}</span>
+                                        </div>
+                                        <div class="widget-49-meeting-points">
+                                            <p class = "widget-49-meeting-points"><span>{{posting.company}}</span></p>
+                                        <a href = '{{posting.job_url}}' class = "widget-49-meeting-points">{{posting.job_url}}</a>
+                                        <p class = "widget-49-meeting-points"><span>{{posting.job_email}}</span></p>
+                                        </div>
+                                        <div class="widget-49-meeting-action">
+                                        <a class="btn btn-sm btn-flash-border-primary" href="{% url 'jobboard:detail_view' posting.id %}">More Info</a>
+                                        </div>
+                                        </div>
+                                        </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>  
+                            </li>
+                        {% endfor %}
+                        <li >
+                            <p><a href="{% url 'jobboard:create_stage'%}" > Add Stage <span class = "glyphicon glyphicon-plus"></span></a></p> 
+                        </li>  
+                    </ul>
+
             </div>
-            <p> <a href="{% url 'jobboard:create_stage'%}" class="button">Add Stage</a> </p>    
-        <p> <a href="{% url 'jobboard:create_post'%}" class="button">Create Post</a> </p>
-        <p><a href="{% url 'logout' %}">Log Out</a></p>
+            </div>
+            <p><a href="{% url 'jobboard:create_post'%}" > Create Post <span class = "glyphicon glyphicon-plus"></span></a></p>  
+            <p> <a href="{% url 'jobboard:get_updates'%}" class="button">Sign Up for Email Reminders</a> </p>
+        <p><a href="{% url 'logout' %}"> Log Out <span class = "glyphicon glyphicon-log-out"></span></a></p>
     
      </body>
 {% else %}
 <p>You are not logged in</p>
-<a href="/accounts/login/">Log In</a>
+<a href="{% url 'login' %}">Log In</a>
 {% endif %}
 </html>
 

@@ -3,7 +3,7 @@ from django.http import HttpResponseServerError, JsonResponse
 from .models import Stage, Posting
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .forms import EditPostForm, UserRegisterForm, EditStageForm
+from .forms import EditPostForm, UserRegisterForm, EditStageForm, UpdateTimeForm
 import logging
 
 
@@ -69,6 +69,15 @@ def create_post(request):
   return render(request, 'jobboard/create_post.html', context)
 
 @login_required
+def get_updates(request):
+  context = {}
+  form = UpdateTimeForm(request.POST or None, request = request)
+  if form.is_valid():
+    form.save()
+  context["form"] = form
+  return render(request, 'jobboard/get_updates.html', context)
+
+@login_required
 def create_stage(request):
   context = {}
   form = EditStageForm(request.POST or None, request = request)
@@ -94,11 +103,6 @@ def delete_post(request, posting_id):
  
     if request.method =="POST":
         posting.delete()
-        latest_stage_list = Stage.objects.filter(author = request.user)
-        context = {
-            'latest_stage_list': latest_stage_list,
-        }
-        return render(request, 'jobboard/index.html', context)
     return render(request, "jobboard/delete_post.html", context)
 
 @login_required
@@ -108,11 +112,6 @@ def delete_stage(request, stage_id):
  
     if request.method =="POST":
         stage.delete()
-        latest_stage_list = Stage.objects.filter(author = request.user)
-        context = {
-            'latest_stage_list': latest_stage_list,
-        }
-        return render(request, 'jobboard/index.html', context)
     return render(request, "jobboard/delete_stage.html", context)
 
 def register(request):

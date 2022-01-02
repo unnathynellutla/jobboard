@@ -3,30 +3,62 @@ from celery.task.schedules import crontab
 from celery.decorators import periodic_task
 from mysite.settings import EMAIL_HOST_USER
 from django.core.mail import send_mail
+from django.contrib.auth.models import User
+from .models import Stage
+from datetime import date, timedelta
 
-@shared_task
-def add(x, y):
-    return x + y
-
-
-@shared_task
-def mul(x, y):
-    return x * y
-
-
-@shared_task
-def xsum(numbers):
-    return sum(numbers)
 
 @periodic_task(
-    run_every=(crontab(minute='*/1')),
-    name="send_email",
+    run_every=timedelta(days=7),
+    name="send_email_weekly",
     ignore_result=True
 )
-def my_first_task():
-    subject= 'Celery'
-    message= 'My task done successfully'
-    receiver= 'unnathy.nellutla@tufts.edu'
-    send_mail(subject,message,EMAIL_HOST_USER,[receiver],
-    fail_silently= False)
+def weekly_emails():
+    send = False
+    receivers = User.objects.all()
+    current_week = date.today().isocalendar()[1]
+    for receiver in receivers:
+        subject= "Today's Job Alerts for " + receiver.username
+        message = 'Your deadlines in the next week: '
+        for stage in Stage.objects.filter(author=receiver): 
+            for posting in stage.ordered_posting_set().filter(deadline__week=current_week):
+                send = True
+                message += posting.job_title 
+                message += ' '
+                message += stage.stage_title
+                message += ' due on: '
+                message += posting.deadline.strftime("%m/%d/%Y, %H:%M:%S")
+                message += ' '
+            message += '.'
+        if send == True:
+            send_mail(subject,message,EMAIL_HOST_USER,[receiver.email], fail_silently= False)
+            send = False
+    return('first_task_done')
+
+
+@periodic_task(
+    run_every=timedelta(days=1),
+    name="send_email_daily",
+    ignore_result=True
+)
+def daily_emails():
+    send = False
+    receivers = User.objects.all()
+    current_day = date.today()
+    for receiver in receivers:
+        subject= "Today's Job Alerts for " + receiver.username
+        message = 'Your deadlines in the next 24 hours: '
+        for stage in Stage.objects.filter(author=receiver): 
+            for posting in stage.ordered_posting_set().filter(deadline__day=current_day):
+                send = True
+                message += posting.job_title 
+                message += ' '
+                message += stage.stage_title
+                message += ' due on: '
+                message += posting.deadline.strftime("%m/%d/%Y, %H:%M:%S")
+                message += ' '
+            message += '.'
+        if send == True:
+            send_mail(subject,message,EMAIL_HOST_USER,[receiver.email], fail_silently= False)
+            send = False
     return('first_task_done')

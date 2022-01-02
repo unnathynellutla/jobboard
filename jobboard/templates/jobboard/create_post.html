@@ -2,10 +2,13 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href='{% static "styles.css" %}'>
 <div class="main">
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
+        <input type="hidden" name="next" value="{{ request.path }}">
         <input type="submit" value="Submit">
         <p>    <a href="{% url 'jobboard:index' %}" class="button">Back</a></p>
     </form>

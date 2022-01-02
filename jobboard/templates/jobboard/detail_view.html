@@ -1,16 +1,20 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<style>
+div {
+    white-space: pre-wrap;
+}
+</style>
 
     <h1>{{ posting.job_title }}</h1>
-    <ul>
-    <li>{{ posting.deadline|date:"Y-m-d"}}</li>
-    <li>{{ posting.job_description}}</li>
-    <li>{{ posting.job_url}}</li>
-    <li>{{ posting.job_email}}</li>
-
+    <div>{{ posting.company }}</div>
+    <div>{{ posting.deadline|date:"Y-m-d"}}</div>
+    <div>{{ posting.job_description}}</div>
+    <a href = '{{posting.job_url}}' class = "widget-49-meeting-points">{{posting.job_url}}</a>
+    <div>
     <a href="{% url 'jobboard:edit_post' posting.id %}" class="button">Edit</a>
     <a href="{% url 'jobboard:index' %}" class="button">Back</a>
     <a href="{% url 'jobboard:delete_post' posting.id %}" class="button">Delete</a>
-</ul>
+    </div>
