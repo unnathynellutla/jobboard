@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         send = False
-        pks = UpdateTime.objects.values_list('author', flat=True)
+        pks = UpdateTime.objects.filter(update_time = ('hour', 'Hourly')).values_list('author', flat=True)
         receivers = User.objects.filter(pk__in=pks).all()
         current_day = datetime.datetime.now().replace(tzinfo=pytz.UTC)
         for receiver in receivers:
@@ -20,7 +20,7 @@ class Command(BaseCommand):
             message = 'Your deadlines in the next 24 hours: '
             for stage in Stage.objects.filter(author=receiver): 
                 for posting in stage.ordered_posting_set():
-                    if posting.deadline-datetime.timedelta(days=7) <= current_day <= posting.deadline:
+                    if posting.deadline-datetime.timedelta(hours=1) <= current_day <= posting.deadline:
                         send = True
                         message += posting.job_title 
                         message += ' '

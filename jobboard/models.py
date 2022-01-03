@@ -27,8 +27,8 @@ class Posting(models.Model):
 
 class UpdateTime(models.Model):
     CHOICES = (
-        ('week','Weekly'),
-        ('day', 'Daily'),
+        ('day','Daily'),
+        ('hour', 'Hourly'),
         ('none', 'Never')
     )
     author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
