@@ -13,7 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         send = False
         receivers = User.objects.all()
-        current_day = datetime.datetime.now(tzinfo=pytz.UTC)
+        current_day = datetime.datetime.now().replace(tzinfo=pytz.UTC)
         for receiver in receivers:
             subject= "Today's Job Alerts for " + receiver.username
             message = 'Your deadlines in the next 24 hours: '
