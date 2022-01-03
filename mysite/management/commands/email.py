@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from mysite.settings import EMAIL_HOST_USER
 from django.core.mail import send_mail
 from datetime import date, timedelta
+from jobboard.models import Posting, Stage
 
 
 class Command(BaseCommand):
