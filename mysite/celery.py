@@ -22,6 +22,14 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(10.0, daily_emails(), name='add every 10')
 
 
+app.conf.beat_schedule = {
+    'email-every-30-seconds': {
+        'task': 'tasks.daily_emails',
+        'schedule': 30.0,
+        'args': (16, 16)
+    },
+}
+
 @app.task(bind=True)
 def debug_task(self):
     print('Request: {0!r}'.format(self.request))
