@@ -17,7 +17,7 @@ class Command(BaseCommand):
             subject= "Today's Job Alerts for " + receiver.username
             message = 'Your deadlines in the next 24 hours: '
             for stage in Stage.objects.filter(author=receiver): 
-                for posting in stage.ordered_posting_set().filter(deadline >= current_day-1):
+                for posting in stage.ordered_posting_set().filter(posting.deadline >= current_day-1):
                     send = True
                     message += posting.job_title 
                     message += ' '
