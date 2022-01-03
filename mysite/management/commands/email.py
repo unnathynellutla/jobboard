@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from mysite.settings import EMAIL_HOST_USER
 from django.core.mail import send_mail
-from datetime import date, timedelta
+import datetime
 from jobboard.models import Posting, Stage
 from django.contrib.auth.models import User
 
@@ -12,13 +12,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         send = False
         receivers = User.objects.all()
-        current_day = date.now()
+        current_day = datetime.now()
         for receiver in receivers:
             subject= "Today's Job Alerts for " + receiver.username
             message = 'Your deadlines in the next 24 hours: '
             for stage in Stage.objects.filter(author=receiver): 
                 for posting in stage.ordered_posting_set():
-                    if posting.deadline- timedelta(hours=24) <= current_day <= posting.deadline:
+                    if posting.deadline- datetime.timedelta(hours=24) <= current_day <= posting.deadline:
                         send = True
                         message += posting.job_title 
                         message += ' '
