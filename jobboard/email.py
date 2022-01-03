@@ -5,6 +5,7 @@ from datetime import date, timedelta
 
 
 class Command(BaseCommand):
+    help = 'Sends an Email'
 
     def handle(self, *args, **options):
         receivers = "unnathy.nellutla@tufts.edu"
