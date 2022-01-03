@@ -19,7 +19,7 @@ class Command(BaseCommand):
             message = 'Your deadlines in the next 24 hours: '
             for stage in Stage.objects.filter(author=receiver): 
                 for posting in stage.ordered_posting_set():
-                   # if posting.deadline-datetime.timedelta(days=7) <= current_day <= posting.deadline:
+                    if posting.deadline-datetime.timedelta(days=7) <= current_day <= posting.deadline:
                         send = True
                         message += posting.job_title 
                         message += ' '
