@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         send = False
-        receivers = UpdateTime.values_list('comment_id', flat=True)
+        receivers = UpdateTime.objects.values_list('author', flat=True)
         current_day = datetime.datetime.now().replace(tzinfo=pytz.UTC)
         for receiver in receivers:
             subject= "Today's Job Alerts for " + receiver.username
