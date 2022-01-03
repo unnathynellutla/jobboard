@@ -4,7 +4,7 @@ This is my submission for the coding assessment. My idea was that I find it diff
 
 For the acceptance criteria, it is a Django web app so Python is used for most tasks. I used HTML, Javascript and CSS for the page view templates, the database is the built in sqlite3 database, and I also used bootstrap for the page styling. For the drag and drop on posts I used jquery draggable lists and ajax to have them save to the database when they are dropped. I did not get a chance to fully test whether emails are sending hourly and daily using the heroku scheduler, but it worked for a shorter interval of 10 minutes. 
 
-I originally wanted to have it take information from my email account and automatically update, such as if I get an email that says I have an interview tomorrow it automatically changes that posting to the interview stage on the app. I still think it is possible but it will definitely take me more than a week so I’m still working on that part. In the meantime I did the other features where you can manually go and update it.
+I originally wanted to have it take information from my email account and automatically update, such as if I get an email that says I have an interview tomorrow it automatically changes that posting to the interview stage on the app. I still think it is possible but it will definitely take me more than a week. In the meantime I did the other features where you can manually go and update it. I have some other ideas for better styling and so on, so I think I'm going to keep working on this. 
 
 If you don’t have time to make an account and everything, I put my login credentials down here so you can take a look. I just put in some jobs from my university job board.
 
