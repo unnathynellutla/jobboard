@@ -16,12 +16,6 @@ app = Celery('mysite')
 app.config_from_object('django.conf:settings')
 app.autodiscover_tasks()
 
-@app.on_after_configure.connect
-def setup_periodic_tasks(sender, **kwargs):
-    # Calls test('hello') every 10 seconds.
-    sender.add_periodic_task(10.0, daily_emails(), name='add every 10')
-
-
 app.conf.beat_schedule = {
     'email-every-30-seconds': {
         'task': 'tasks.daily_emails',
