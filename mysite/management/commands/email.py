@@ -17,16 +17,17 @@ class Command(BaseCommand):
             subject= "Today's Job Alerts for " + receiver.username
             message = 'Your deadlines in the next 24 hours: '
             for stage in Stage.objects.filter(author=receiver): 
-                for posting in stage.ordered_posting_set().filter(posting.deadline >= current_day-1):
-                    send = True
-                    message += posting.job_title 
-                    message += ' '
-                    message += stage.stage_title
-                    message += ' due on: '
-                    message += posting.deadline.strftime("%m/%d/%Y, %H:%M:%S")
-                    message += ' '
-                message += '.'
+                for posting in stage.ordered_posting_set():
+                    if posting.deadline >= current_day-1:
+                        send = True
+                        message += posting.job_title 
+                        message += ' '
+                        message += stage.stage_title
+                        message += ' due on: '
+                        message += posting.deadline.strftime("%m/%d/%Y, %H:%M:%S")
+                        message += ' '
             if send == True:
+                message += '.'
                 send_mail(subject,message,EMAIL_HOST_USER,[receiver.email], fail_silently= False)
                 send = False
         return('first_task_done')
