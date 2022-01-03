@@ -4,6 +4,7 @@ from django.core.mail import send_mail
 import datetime
 from jobboard.models import Posting, Stage
 from django.contrib.auth.models import User
+import pytz
 
 
 class Command(BaseCommand):
@@ -12,7 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         send = False
         receivers = User.objects.all()
-        current_day = datetime.datetime.now()
+        current_day = datetime.datetime.now(tzinfo=pytz.UTC)
         for receiver in receivers:
             subject= "Today's Job Alerts for " + receiver.username
             message = 'Your deadlines in the next 24 hours: '
