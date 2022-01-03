@@ -19,8 +19,7 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'email-every-30-seconds': {
         'task': 'tasks.daily_emails',
-        'schedule': 30.0,
-        'args': (16, 16)
+        'schedule': 10.0
     },
 }
 
